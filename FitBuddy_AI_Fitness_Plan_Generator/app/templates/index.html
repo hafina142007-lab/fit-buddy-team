@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>FitBuddy — Your AI Fitness Partner</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+<header class="topbar"><a class="brand" href="/"><span class="brand-mark">F</span> FitBuddy</a><nav><a href="#how">How it works</a><a href="/docs">API docs</a><a class="nav-cta" href="#planner">Build my plan <span>↗</span></a></nav></header>
+<main>
+<section class="hero">
+  <div class="hero-copy">
+    <div class="eyebrow"><span class="pulse"></span> YOUR PERSONAL AI FITNESS PARTNER</div>
+    <h1>Small steps.<br><span>Stronger you.</span></h1>
+    <p class="hero-lead">A fitness plan that starts with you. Build a practical 7-day routine around your goal, experience, and preferred intensity.</p>
+    <div class="hero-actions"><a class="button primary" href="#planner">Create my free plan <span>↗</span></a><a class="text-link" href="#how">See how it works ↓</a></div>
+    <div class="trust-row"><div class="avatars"><span>✦</span><span>F</span><span>+</span></div><p><strong>Made for your journey</strong><br><small>Flexible routines · Simple guidance</small></p></div>
+  </div>
+  <div class="hero-visual">
+    <div class="orb orb-one"></div><div class="orb orb-two"></div>
+    <div class="hero-card">
+      <div class="card-top"><span class="mini-icon">✦</span><span>YOUR WEEK, REIMAGINED</span><span class="live-dot"></span></div>
+      <div class="hero-figure">🏃🏻‍♀️</div>
+      <div class="hero-card-bottom"><div><small>YOUR NEXT CHAPTER</small><h3>Progress over perfection.</h3></div><div class="round-arrow">↗</div></div>
+    </div>
+    <div class="float-card float-top"><span class="float-icon green">✓</span><div><strong>Made for you</strong><small>Your goal. Your pace.</small></div></div>
+    <div class="float-card float-bottom"><span class="float-icon orange">⚡</span><div><strong>7-day structure</strong><small>Move · Recover · Repeat</small></div></div>
+    <span class="decor-star star-one">✳</span><span class="decor-star star-two">✦</span>
+  </div>
+</section>
+<section class="ticker"><span>MOVE WITH PURPOSE</span><b>✳</b><span>BUILD YOUR ROUTINE</span><b>✳</b><span>RECOVER WITH CARE</span><b>✳</b><span>SHOW UP FOR YOU</span></section>
+<section class="planner-section" id="planner">
+  <div class="section-heading"><div class="eyebrow">LET'S GET TO KNOW YOU</div><h2>Your goals. <span>Your game plan.</span></h2><p>Share a few details and FitBuddy will shape a week-one routine around you.</p></div>
+  <div class="planner-layout">
+    <aside class="planner-aside"><span class="aside-number">01 / YOUR STARTING POINT</span><h3>Every journey<br>starts somewhere.</h3><p>No perfect starting point needed. Choose what feels realistic today; you can refine your plan later with feedback.</p><div class="aside-note"><span>✦</span><p><strong>Remember</strong><br>Consistency beats intensity. Start at a level you can do comfortably.</p></div><div class="aside-lines"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div></aside>
+    <div class="form-card">
+      {% if error %}<div class="alert">{{ error }}</div>{% endif %}
+      <form action="/generate-workout" method="post" id="fitness-form">
+        <div class="form-title"><span class="step-badge">✦</span><div><h3>Build your fitness profile</h3><p>All fields are used to personalize your plan.</p></div></div>
+        <div class="field-grid">
+          <label>Full name<input name="username" placeholder="e.g. Karthi" minlength="2" maxlength="120" required value="{{ previous.username if previous else '' }}"></label>
+          <label>Unique user ID<input name="user_id" placeholder="e.g. karthi_01" pattern="[A-Za-z0-9_-]+" minlength="2" maxlength="80" required value="{{ previous.user_id if previous else '' }}"><small>Letters, numbers, _ or -</small></label>
+          <label>Age<input type="number" name="age" min="16" max="100" placeholder="21" required value="{{ previous.age if previous else '' }}"></label>
+          <label>Weight (kg)<input type="number" name="weight" min="20.1" max="350" step="0.1" placeholder="65.0" required value="{{ previous.weight if previous else '' }}"></label>
+        </div>
+        <fieldset><legend>What's your main goal?</legend><div class="choice-grid">
+          <label class="choice"><input type="radio" name="goal" value="Weight loss" {% if previous and previous.goal == "Weight loss" %}checked{% endif %} required><span class="choice-emoji">↘</span><span><strong>Weight loss</strong><small>Move more, build habits</small></span></label>
+          <label class="choice"><input type="radio" name="goal" value="Muscle gain" {% if previous and previous.goal == "Muscle gain" %}checked{% endif %}><span class="choice-emoji">↗</span><span><strong>Muscle gain</strong><small>Build strength steadily</small></span></label>
+          <label class="choice"><input type="radio" name="goal" value="General wellness" {% if previous and previous.goal == "General wellness" %}checked{% endif %}><span class="choice-emoji">✳</span><span><strong>General wellness</strong><small>Feel good day to day</small></span></label>
+          <label class="choice"><input type="radio" name="goal" value="Flexibility" {% if previous and previous.goal == "Flexibility" %}checked{% endif %}><span class="choice-emoji">〰</span><span><strong>Flexibility</strong><small>Move with more ease</small></span></label>
+        </div></fieldset>
+        <div class="field-grid bottom-fields">
+          <label>Workout intensity<select name="intensity" required><option value="">Choose intensity</option><option value="Low" {% if previous and previous.intensity == "Low" %}selected{% endif %}>Low</option><option value="Medium" {% if previous and previous.intensity == "Medium" %}selected{% endif %}>Medium</option><option value="High" {% if previous and previous.intensity == "High" %}selected{% endif %}>High</option></select></label>
+          <label>Experience level<select name="experience" required><option value="Beginner" {% if not previous or previous.experience == "Beginner" %}selected{% endif %}>Beginner</option><option value="Intermediate" {% if previous and previous.experience == "Intermediate" %}selected{% endif %}>Intermediate</option><option value="Advanced" {% if previous and previous.experience == "Advanced" %}selected{% endif %}>Advanced</option></select></label>
+        </div>
+        <button class="button primary submit-button" type="submit">Generate my 7-day plan <span>↗</span></button>
+        <p class="privacy-note">🔒 Your profile is stored in the local FitBuddy database.</p>
+      </form>
+    </div>
+  </div>
+</section>
+<section class="how-section" id="how"><div class="section-heading"><div class="eyebrow">YOUR ROUTINE, SIMPLIFIED</div><h2>From “someday” to <span>day one.</span></h2><p>A clear starting point, with room to adapt as you go.</p></div><div class="feature-grid"><article class="feature"><span class="feature-num">01</span><div class="feature-icon">◎</div><h3>Tell us about you</h3><p>Choose your goal, experience, and the intensity that feels right for you.</p></article><article class="feature feature-dark"><span class="feature-num">02</span><div class="feature-icon">✦</div><h3>Get your 7-day plan</h3><p>Gemini helps organize your week into workouts, movement, and recovery.</p></article><article class="feature"><span class="feature-num">03</span><div class="feature-icon">↻</div><h3>Make it yours</h3><p>Share feedback to request changes and keep your routine practical.</p></article></div></section>
+<section class="bottom-cta"><div><div class="eyebrow">YOUR NEXT STEP STARTS HERE</div><h2>You don't need perfect.<br><span>You just need to begin.</span></h2></div><a class="button light-button" href="#planner">Start my plan ↗</a></section>
+</main>
+<footer><a class="brand" href="/"><span class="brand-mark">F</span> FitBuddy</a><p>Built for progress, not perfection.</p><div><a href="/docs">API docs</a><a href="/view-all-users">Coach dashboard</a></div><small>© 2026 FitBuddy. General wellness guidance only.</small></footer>
+<script src="/static/js/app.js"></script>
+</body></html>
